@@ -9,8 +9,10 @@ use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 
+
 class CabinsController extends Controller
 {
+    const STORAGE_URL = 'http://127.0.0.1:8000/storage/cabins/';
     public function index(): JsonResponse
     {
         try {
@@ -21,9 +23,10 @@ class CabinsController extends Controller
         }
     }
 
+
+
     public function store(Request $request)
     {
-        // \Log::info( $request->all());
        try {
            $validator = Validator::make($request->all(),Cabins::validationRules());
 
@@ -40,7 +43,7 @@ class CabinsController extends Controller
            $cabin->max_capacity = $request->input("max_capacity");
            $cabin->description = $request->input("description");
            $cabin->discount = $request->input("discount");
-           $cabin->image = 'http://127.0.0.1:8000/storage/cabins/'. $file_name;
+           $cabin->image = self::STORAGE_URL . $file_name;
            $cabin->save();
 
            return response()->json(['data' => $cabin], 201);
@@ -85,7 +88,7 @@ class CabinsController extends Controller
                 $file_name = time() . "." . $request->image->extension();
                 $request->image->storeAs('public/cabins', $file_name);
 
-                $image = 'http://127.0.0.1:8000/storage/cabins/'. $file_name;
+                $image = self::STORAGE_URL. $file_name;
             }
 
             if ($validator->fails()) {
