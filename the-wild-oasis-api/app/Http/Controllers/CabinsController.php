@@ -27,15 +27,34 @@ class CabinsController extends Controller
 
     public function store(Request $request)
     {
-       try {
-           $validator = Validator::make($request->all(),Cabins::validationRules());
+        try {
 
-           if ($validator->fails()) {
-               return response()->json(['error' => $validator->errors()], 400);
-           }
+        $validator = "";
+        $image="";
+        if(is_string($request->image)){ 
+            \Log::info($request->image);
+            $validator = Validator::make($request->all(),[
+                'name' =>'required|string',
+                'regular_price' => 'required',
+                'max_capacity' => 'required',
+                'description' => 'string',
+                'image' => 'string', 
+            ]);
 
-           $file_name = time() . "." . $request->image->extension();
-           $request->image->storeAs('public/cabins', $file_name);
+
+            $image = $request->image;
+        }else{
+            $validator = Validator::make($request->all(),Cabins::validationRules());
+
+            $file_name = time() . "." . $request->image->extension();
+            $request->image->storeAs('public/cabins', $file_name);
+
+            $image = self::STORAGE_URL. $file_name;
+        }
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
 
            $cabin = new Cabins;
            $cabin->name = $request->input('name');
@@ -43,7 +62,7 @@ class CabinsController extends Controller
            $cabin->max_capacity = $request->input("max_capacity");
            $cabin->description = $request->input("description");
            $cabin->discount = $request->input("discount");
-           $cabin->image = self::STORAGE_URL . $file_name;
+           $cabin->image = $image;
            $cabin->save();
 
            return response()->json(['data' => $cabin], 201);
