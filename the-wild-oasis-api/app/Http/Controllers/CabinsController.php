@@ -32,7 +32,7 @@ class CabinsController extends Controller
         $validator = "";
         $image="";
         if(is_string($request->image)){ 
-            \Log::info($request->image);
+            // \Log::info($request->image);
             $validator = Validator::make($request->all(),[
                 'name' =>'required|string',
                 'regular_price' => 'required',

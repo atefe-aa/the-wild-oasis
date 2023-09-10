@@ -1,27 +1,33 @@
-import supabase from "./supabase";
+const BASE_URL = `http://127.0.0.1:8000/api/settings`;
 
 export async function getSettings() {
-  const { data, error } = await supabase.from("settings").select("*").single();
+  const res = await fetch(BASE_URL, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  const { data, error } = await res.json();
 
   if (error) {
     console.error(error);
-    throw new Error("Settings could not be loaded");
+    throw new Error("Settings could not be found.");
   }
-  return data;
+  return data[0];
 }
 
 // We expect a newSetting object that looks like {setting: newValue}
-export async function updateSetting(newSetting) {
-  const { data, error } = await supabase
-    .from("settings")
-    .update(newSetting)
-    // There is only ONE row of settings, and it has the ID=1, and so this is the updated one
-    .eq("id", 1)
-    .single();
+export async function updateSetting(newSetting, id=1) {
+  console.log(newSetting)
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(newSetting),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  const { error, data, success } = await res.json();
 
   if (error) {
     console.error(error);
     throw new Error("Settings could not be updated");
   }
-  return data;
+  return { data, success };
 }
