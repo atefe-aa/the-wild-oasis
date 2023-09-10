@@ -23,23 +23,31 @@ class CabinsController extends Controller
 
     public function store(Request $request)
     {
-        // return response($request);
+        // \Log::info( $request->all());
        try {
-           $validator = Validator::make($request->all(), [
-               'name' => 'required|string',
-               'regular_price' => 'required',
-               'max_capacity' => 'required',
-           ]);
+           $validator = Validator::make($request->all(),Cabins::validationRules());
 
            if ($validator->fails()) {
                return response()->json(['error' => $validator->errors()], 400);
            }
 
-           $cabin = Cabins::create($request->all());
+           $file_name = time() . "." . $request->image->extension();
+           $request->image->storeAs('public/cabins', $file_name);
+
+           $cabin = new Cabins;
+           $cabin->name = $request->input('name');
+           $cabin->regular_price = $request->input("regular_price");
+           $cabin->max_capacity = $request->input("max_capacity");
+           $cabin->description = $request->input("description");
+           $cabin->discount = $request->input("discount");
+           $cabin->image = 'http://127.0.0.1:8000/storage/cabins/'. $file_name;
+           $cabin->save();
+
            return response()->json(['data' => $cabin], 201);
        } catch (QueryException $e) {
-           return response()->json(['error' => 'Error creating cabin. Check your input data.'], 400);
-       } catch (Exception $e) {
+        return response()->json(['error' => 'Error creating cabin. Check your input data.'], 400);
+    } catch (Exception $e) {
+    
            return response()->json(['error' => 'An error occurred while creating the cabin'], 500);
        }
     }
@@ -49,6 +57,7 @@ class CabinsController extends Controller
         try {
             return response()->json(['data' => $cabin]);
         } catch (Exception $e) {
+       
             return response()->json(['error' => 'An error occurred while fetching the cabin'], 500);
         }
     }
@@ -56,17 +65,42 @@ class CabinsController extends Controller
     public function update(Request $request, Cabins $cabin): JsonResponse
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string',
-                'description' => 'string',
-                // Add more validation rules as needed
-            ]);
+ 
+            $validator = "";
+            $image="";
+            if(is_string($request->image)){ 
+                $validator = Validator::make($request->all(),[
+                    'name' =>'required|string',
+                    'regular_price' => 'required',
+                    'max_capacity' => 'required',
+                    'description' => 'string',
+                    'image' => 'string', 
+                ]);
+
+
+                $image = $request->image;
+            }else{
+                $validator = Validator::make($request->all(),Cabins::validationRules());
+
+                $file_name = time() . "." . $request->image->extension();
+                $request->image->storeAs('public/cabins', $file_name);
+
+                $image = 'http://127.0.0.1:8000/storage/cabins/'. $file_name;
+            }
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 400);
             }
 
-            $cabin->update($request->all());
+            $cabin->update([
+                'name' => $request->input('name'),
+                'regular_price' => $request->input("regular_price"),
+                'max_capacity' => $request->input("max_capacity"),
+                'description' => $request->input("description"),
+                'discount' => $request->input("discount"),
+                'image' => $image,
+            ]);
+
             return response()->json(['data' => $cabin]);
         } catch (QueryException $e) {
             return response()->json(['error' => 'Error updating cabin. Check your input data.'], 400);

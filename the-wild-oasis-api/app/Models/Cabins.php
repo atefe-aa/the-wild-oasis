@@ -18,4 +18,15 @@ protected $fillable = [
     'status'
 ];
 
+public static function validationRules()
+{
+    return [
+        'name' =>'required|string',
+        'regular_price' => 'required',
+        'max_capacity' => 'required',
+        'description' => 'string',
+        'image' => ['required','image','mimes:jpeg,png,jpg,gif'], 
+    ];
+}
+
 }

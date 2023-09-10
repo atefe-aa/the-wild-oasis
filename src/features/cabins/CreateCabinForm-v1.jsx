@@ -1,15 +1,15 @@
-import styled from "styled-components";
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createCabin } from "../../services/apiCabins";
-import { toast } from "react-hot-toast";
 import FormRow from "../../ui/FormRow";
+
+import { createCabin } from "../../services/apiCabins";
 
 function CreateCabinForm() {
   const { register, handleSubmit, reset, getValues, formState } = useForm();
@@ -28,7 +28,8 @@ function CreateCabinForm() {
   });
 
   function onSubmit(data) {
-    mutate(data);
+    mutate({ ...data, image: data.image[0] });
+    // console.log(data);
   }
 
   function onError(errors) {
@@ -87,7 +88,7 @@ function CreateCabinForm() {
           {...register("discount", {
             required: "This field is required.",
             validate: (value) =>
-              value <= getValues().regular_price ||
+              value <= Number(getValues().regular_price) ||
               "The discount value must be less than regular price.",
           })}
         />
@@ -113,7 +114,7 @@ function CreateCabinForm() {
           id="image"
           disabled={isCreating}
           accept="image/*"
-          {...register("description", {
+          {...register("image", {
             required: "This field is required.",
           })}
         />
@@ -121,7 +122,7 @@ function CreateCabinForm() {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+        <Button $variation="secondary" type="reset">
           Cancel
         </Button>
         <Button disabled={isCreating}>Add cabin</Button>

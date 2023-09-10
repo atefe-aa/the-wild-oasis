@@ -20,6 +20,7 @@ use App\Http\Controllers\BookingsController;
 
 //cabins
 Route::apiResource('cabins', CabinsController::class);
+Route::post('cabins/{cabin}', [CabinsController::class, 'update']);//this one must be a post request because it's not possible to send a file(the cabin image) through a put request!
 
 //guests
 Route::apiResource('guests', GuestsController::class);

@@ -3,7 +3,7 @@ import Row from "../ui/Row";
 import CabinTable from "../features/cabins/CabinTable";
 import { useState } from "react";
 import Button from "../ui/Button";
-import CreateCabinForm from "../features/cabins/CreateCabinForm";
+import CreateEditCabinForm from "../features/cabins/CreateEditCabinForm";
 
 function Cabins() {
   const [showForm, setShowForm] = useState(false);
@@ -19,7 +19,7 @@ function Cabins() {
           Add new cabin
         </Button>
         {
-          showForm && <CreateCabinForm />
+          showForm && <CreateEditCabinForm />
         }
       </Row>
     </>
