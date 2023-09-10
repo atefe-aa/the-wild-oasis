@@ -31,28 +31,6 @@ export async function deleteCabin(id) {
   return success;
 }
 
-// export async function createCabin(newCabin) {
-//   // console.log((newCabin))
-//   const res = await fetch(url, {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify(newCabin),
-//   });
-//   const { data, success, error } = await res.json();
-//   console.log(data);
-//   if (error) {
-//     const { name, regular_price, max_capacity, image } = error;
-//     console.error(error);
-//     if (name) throw new Error(name);
-//     if (max_capacity) throw new Error(max_capacity);
-//     if (regular_price) throw new Error(regular_price);
-//     if (image) throw new Error(image);
-//     throw new Error(error);
-//   }
-
-//   return success;
-// }
-
 //use formData so you don't need JSON.stringify which would prevent image to be uploaded
 export async function insertCabin(newCabin) {
   const formData = new FormData();
@@ -81,7 +59,7 @@ export async function insertCabin(newCabin) {
     throw new Error("Error creating cabin.");
   }
 
-  return success;
+  return {success, data};
 }
 
 export async function updateCabin(newCabin, id) {
@@ -126,5 +104,5 @@ export async function updateCabin(newCabin, id) {
     throw new Error("Error creating cabin.");
   }
 
-  return success;
+  return {success, data};
 }
