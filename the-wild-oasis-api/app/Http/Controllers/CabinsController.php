@@ -31,16 +31,35 @@ class CabinsController extends Controller
         // \Log::info($request->all());
         try {
 
-            $validator = Validator::make($request->all(),Cabins::validationRules());
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()], 400);
+            //for duplicating the cabin image wil be a url(string) then it needs a different validation
+            if(is_string($request->image)){
+                $validator = Validator::make($request->all(),[
+                    'name' =>'required|string',
+                    'regular_price' => 'required',
+                    'max_capacity' => 'required',
+                    'description' => 'string',
+                    'image' => ['required','string'], 
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json(['error' => $validator->errors()], 400);
+                }
+                $image = $request->image;
+
+            }else{
+                 $validator = Validator::make($request->all(),Cabins::validationRules());
+           
+                 if ($validator->fails()) {
+                    return response()->json(['error' => $validator->errors()], 400);
+                }
+
+                $file_name = time() . "." . $request->image->extension();
+                $request->image->storeAs('public/cabins', $file_name);
+
+                $image = self::STORAGE_URL. $file_name;
             }
-
-            $file_name = time() . "." . $request->image->extension();
-            $request->image->storeAs('public/cabins', $file_name);
-
-            $image = self::STORAGE_URL. $file_name;
-
+           
+       
 
            $cabin = new Cabins;
            $cabin->name = $request->input('name');
