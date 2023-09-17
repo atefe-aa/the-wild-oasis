@@ -64,6 +64,7 @@ function CabinRow({ cabin }) {
   const { deleteCabin, isDeleting } = useDeleteCabin();
 
   function handleDuplicate() {
+    console.log(image);
     createCabin({
       name: `copy of ${cabin.name}`,
       image,
@@ -86,28 +87,27 @@ function CabinRow({ cabin }) {
         <span>&mdash;</span>
       )}
       <div>
+
         <Modal>
           <Menus.Menu>
             <Menus.Toggle id={id} />
 
             <Menus.List id={id}>
-              <Menus.Button icon={<HiSquare2Stack />} onClick={handleDuplicate}>
-                Duplicate
-              </Menus.Button>
+              <Menus.Button icon={<HiSquare2Stack/>}  onClick={handleDuplicate}  >Duplicate</Menus.Button>
 
-              <Modal.Open opens="edit">
-                <Menus.Button icon={<HiPencil />}>Edit</Menus.Button>
-              </Modal.Open>
+            <Modal.Open opens="edit">
+            <Menus.Button icon={<HiPencil/>}>Edit</Menus.Button>
 
-              <Modal.Open opens="delete">
-                <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
-              </Modal.Open>
-            </Menus.List>
-
+            </Modal.Open>
             <Modal.Window name="edit">
               <CreateEditCabinForm cabinToEdit={cabin} />
             </Modal.Window>
 
+            <Modal.Open opens="delete">
+            <Menus.Button icon={<HiTrash/>}>Delete</Menus.Button>
+
+            </Modal.Open>
+            </Menus.List>
             <Modal.Window name="delete">
               <ConfirmDelete
                 resourceName="cabin"
@@ -117,6 +117,8 @@ function CabinRow({ cabin }) {
             </Modal.Window>
           </Menus.Menu>
         </Modal>
+
+        <Menus.Menu></Menus.Menu>
       </div>
     </Table.Row>
   );
