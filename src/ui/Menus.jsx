@@ -84,7 +84,7 @@ function Menus({ children }) {
 }
 
 function List({ id, children }) {
-  const { openId, position } = useContext(MenusContext);
+  const { openId, position , close} = useContext(MenusContext);
   const ref = useOutsideClick(close);
 
   if (openId !== id) return null;
