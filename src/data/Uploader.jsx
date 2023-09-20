@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { isFuture, isPast, isToday } from "date-fns";
-import supabase from "../services/supabase";
 import Button from "../ui/Button";
 import { subtractDates } from "../utils/helpers";
 
@@ -15,49 +14,62 @@ import { guests } from "./data-guests";
 //   breakfastPrice: 15,
 // };
 
+const BASE_URL = `http://127.0.0.1:8000/api/`;
+
 async function deleteGuests() {
-  const { error } = await supabase.from("guests").delete().gt("id", 0);
+  const { error } = await fetch(`${BASE_URL}guests/empty`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
   if (error) console.log(error.message);
 }
 
 async function deleteCabins() {
-  const { error } = await supabase.from("cabins").delete().gt("id", 0);
+  const { error } = await fetch(`${BASE_URL}cabins/empty`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
   if (error) console.log(error.message);
 }
 
 async function deleteBookings() {
-  const { error } = await supabase.from("bookings").delete().gt("id", 0);
+  const { error } = await fetch(`${BASE_URL}bookings/empty`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
   if (error) console.log(error.message);
 }
 
 async function createGuests() {
-  const { error } = await supabase.from("guests").insert(guests);
+  const { error } = await fetch(`${BASE_URL}guests`, {
+    method: "POST",
+    body: JSON.stringify(guests),
+    headers: { "Content-Type": "application/json" },
+  });
+
   if (error) console.log(error.message);
 }
 
 async function createCabins() {
-  const { error } = await supabase.from("cabins").insert(cabins);
+  const { error } = await fetch(`${BASE_URL}cabins`, {
+    method: "POST",
+    body: JSON.stringify(cabins),
+    headers: { "Content-Type": "application/json" },
+  });
+
   if (error) console.log(error.message);
 }
 
 async function createBookings() {
-  // Bookings need a guestId and a cabinId. We can't tell Supabase IDs for each object, it will calculate them on its own. So it might be different for different people, especially after multiple uploads. Therefore, we need to first get all guestIds and cabinIds, and then replace the original IDs in the booking data with the actual ones from the DB
-  const { data: guestsIds } = await supabase
-    .from("guests")
-    .select("id")
-    .order("id");
-  const allGuestIds = guestsIds.map((cabin) => cabin.id);
-  const { data: cabinsIds } = await supabase
-    .from("cabins")
-    .select("id")
-    .order("id");
-  const allCabinIds = cabinsIds.map((cabin) => cabin.id);
+  const allGuestIds = Array.from({ length: 30 }, (_, index) => index + 1);
+
+  const allCabinIds = Array.from({ length: 8 }, (_, index) => index + 1);
 
   const finalBookings = bookings.map((booking) => {
-    // Here relying on the order of cabins, as they don't have and ID yet
+    // Here relying on the order of cabins, as they don't have an ID yet
     const cabin = cabins.at(booking.cabinId - 1);
     const numNights = subtractDates(booking.endDate, booking.startDate);
-    const cabinPrice = numNights * (cabin.regularPrice - cabin.discount);
+    const cabinPrice = numNights * (cabin.regular_price - cabin.discount);
     const extrasPrice = booking.hasBreakfast
       ? numNights * 15 * booking.numGuests
       : 0; // hardcoded breakfast price
@@ -82,21 +94,41 @@ async function createBookings() {
     )
       status = "checked-in";
 
+    const {
+      startDate: start_date,
+      endDate: end_date,
+      created_at,
+      hasBreakfast: has_breakfast,
+      observations,
+      isPaid: is_paid,
+      numGuests: num_guests,
+    } = booking;
+
     return {
-      ...booking,
-      numNights,
-      cabinPrice,
-      extrasPrice,
-      totalPrice,
-      guestId: allGuestIds.at(booking.guestId - 1),
-      cabinId: allCabinIds.at(booking.cabinId - 1),
+      num_nights: numNights,
+      cabin_price: cabinPrice,
+      extras_price: extrasPrice,
+      total_price: totalPrice,
+      guest_id: allGuestIds.at(booking.guestId - 1),
+      cabin_id: allCabinIds.at(booking.cabinId - 1),
       status,
+      start_date,
+      end_date,
+      created_at,
+      has_breakfast,
+      observations,
+      is_paid,
+      num_guests,
     };
   });
 
-  console.log(finalBookings);
+  console.log(JSON.stringify(finalBookings));
 
-  const { error } = await supabase.from("bookings").insert(finalBookings);
+  const { error } = await fetch(`${BASE_URL}bookings`, {
+    method: "POST",
+    body: JSON.stringify(finalBookings),
+    headers: { "Content-Type": "application/json" },
+  });
   if (error) console.log(error.message);
 }
 
@@ -104,18 +136,19 @@ function Uploader() {
   const [isLoading, setIsLoading] = useState(false);
 
   async function uploadAll() {
-    setIsLoading(true);
-    // Bookings need to be deleted FIRST
-    await deleteBookings();
-    await deleteGuests();
-    await deleteCabins();
+    // console.log(JSON.stringify(guests));
+    //   setIsLoading(true);
+    //   // Bookings need to be deleted FIRST
+    //   await deleteBookings();
+    //   await deleteGuests();
+    //   await deleteCabins();
 
-    // Bookings need to be created LAST
-    await createGuests();
-    await createCabins();
+    //   // Bookings need to be created LAST
+    //   await createGuests();
+    //   await createCabins();
     await createBookings();
 
-    setIsLoading(false);
+    //   setIsLoading(false);
   }
 
   async function uploadBookings() {

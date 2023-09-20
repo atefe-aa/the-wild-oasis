@@ -21,12 +21,15 @@ use App\Http\Controllers\BookingsController;
 //cabins
 Route::apiResource('cabins', CabinsController::class);
 Route::post('cabins/{cabin}', [CabinsController::class, 'update']);//this one must be a post request because it's not possible to send a file(the cabin image) through a put request!
+Route::get('cabins/empty', [CabinsController::class, 'truncate']);
 
 //guests
 Route::apiResource('guests', GuestsController::class);
+Route::get('guests/empty', [GuestsController::class, 'truncate']);
 
 //bookings
 Route::apiResource('bookings', BookingsController::class);
+Route::get('bookings/empty', [BookingsController::class, 'truncate']);
 
 //settings
 Route::apiResource('settings', SettingsController::class);

@@ -8,4 +8,25 @@ use Illuminate\Database\Eloquent\Model;
 class Guests extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'full_name',
+        'email',
+        'nationality',
+        'national_id',
+        'country_flag',
+        'avatar',
+    ];
+
+    public static function validationRules()
+    {
+        return [
+            'full_name' =>'required|string',
+            'email' => 'required',
+            'nationality' => 'required',
+            'national_id' => 'string',
+            'country_flag' => 'string',
+            // 'avatar' => ['image','mimes:jpeg,png,jpg,gif'], 
+        ];
+    }
 }

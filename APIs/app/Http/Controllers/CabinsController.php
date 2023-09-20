@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 
+use function PHPSTORM_META\type;
 
 class CabinsController extends Controller
 {
@@ -28,12 +29,12 @@ class CabinsController extends Controller
 
     public function store(Request $request)
     {
-        // \Log::info($request->all());
-        try {
 
-            //for duplicating the cabin image wil be a url(string) then it needs a different validation
-            if(is_string($request->image)){
-                $validator = Validator::make($request->all(),[
+       $requestData = $request->all();
+        if(is_array($requestData[0])){
+            $allCabins = [];
+            foreach($requestData as $cabinData){
+                $validator = Validator::make($cabinData,[
                     'name' =>'required|string',
                     'regular_price' => 'required',
                     'max_capacity' => 'required',
@@ -41,15 +42,46 @@ class CabinsController extends Controller
                     'image' => ['required','string'], 
                 ]);
 
-                if ($validator->fails()) {
+                if($validator->fails()){
                     return response()->json(['error' => $validator->errors()], 400);
                 }
-                $image = $request->image;
+
+                $cabin = new Cabins;
+                $cabin->name =  $cabinData['name'];
+                $cabin->regular_price = $cabinData["regular_price"];
+                $cabin->max_capacity = $cabinData["max_capacity"];
+                $cabin->description = $cabinData["description"];
+                $cabin->discount = $cabinData["discount"];
+                $cabin->image = $cabinData['image'];
+                $cabin->save();
+
+                $allCabins[] = $cabin;
+            }
+            return response()->json(['data' => $allCabins], 400);
+        } 
+        
+        
+        
+        //for duplicating the cabin image wil be a url(string) then it needs a different validation
+        try{
+            if(is_string($request->image)){
+            $validator = Validator::make($request->all(),[
+                'name' =>'required|string',
+                'regular_price' => 'required',
+                'max_capacity' => 'required',
+                'description' => 'string',
+                'image' => ['required','string'], 
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 400);
+            }
+            $image = $request->image;
 
             }else{
-                 $validator = Validator::make($request->all(),Cabins::validationRules());
-           
-                 if ($validator->fails()) {
+                $validator = Validator::make($request->all(),Cabins::validationRules());
+        
+                if ($validator->fails()) {
                     return response()->json(['error' => $validator->errors()], 400);
                 }
 
@@ -58,35 +90,89 @@ class CabinsController extends Controller
 
                 $image = self::STORAGE_URL. $file_name;
             }
+        
+
+
+            $cabin = new Cabins;
+            $cabin->name = $request->input('name');
+            $cabin->regular_price = $request->input("regular_price");
+            $cabin->max_capacity = $request->input("max_capacity");
+            $cabin->description = $request->input("description");
+            $cabin->discount = $request->input("discount");
+            $cabin->image = $image;
+            $cabin->save();
+
+            return response()->json(['data' => $cabin], 201);
+            } catch (QueryException $e) {
+                return response()->json(['error' => 'Error creating cabin. Check your input data.'], 400);
+            } catch (Exception $e) {
+
+                return response()->json(['error' => 'An error occurred while creating the cabin'], 500);
+            }
+
+
+    //     // \Log::info($request->all());
+    //     try {
+    //         $cabins = [];
+    //         foreach($request->all() as $newCabin){
+    //         //for duplicating the cabin image wil be a url(string) then it needs a different validation
+    //         if(is_string($newCabin->image)){
+    //             $validator = Validator::make($newCabin->all(),[
+    //                 'name' =>'required|string',
+    //                 'regular_price' => 'required',
+    //                 'max_capacity' => 'required',
+    //                 'description' => 'string',
+    //                 'image' => ['required','string'], 
+    //             ]);
+
+    //             if ($validator->fails()) {
+    //                 return response()->json(['error' => $validator->errors()], 400);
+    //             }
+    //             $image = $newCabin->image;
+
+    //         }else{
+    //             $validator = Validator::make($newCabin->all(),Cabins::validationRules());
+
+    //             if ($validator->fails()) {
+    //                 return response()->json(['error' => $validator->errors()], 400);
+    //             }
+
+    //             $file_name = time() . "." . $newCabin->image->extension();
+    //             $newCabin->image->storeAs('public/cabins', $file_name);
+
+    //             $image = self::STORAGE_URL. $file_name;
+    //         }
+
+
+
+    //         $cabin = new Cabins;
+    //         $cabin->name = $newCabin->input('name');
+    //         $cabin->regular_price = $newCabin->input("regular_price");
+    //         $cabin->max_capacity = $newCabin->input("max_capacity");
+    //         $cabin->description = $newCabin->input("description");
+    //         $cabin->discount = $newCabin->input("discount");
+    //         $cabin->image = $image;
+    //         $cabin->save();
+    //         }
            
-       
 
-           $cabin = new Cabins;
-           $cabin->name = $request->input('name');
-           $cabin->regular_price = $request->input("regular_price");
-           $cabin->max_capacity = $request->input("max_capacity");
-           $cabin->description = $request->input("description");
-           $cabin->discount = $request->input("discount");
-           $cabin->image = $image;
-           $cabin->save();
-
-           return response()->json(['data' => $cabin], 201);
-       } catch (QueryException $e) {
-        return response()->json(['error' => 'Error creating cabin. Check your input data.'], 400);
-    } catch (Exception $e) {
+    //        return response()->json(['data' => $cabin], 201);
+    //    } catch (QueryException $e) {
+    //     return response()->json(['error' => 'Error creating cabin. Check your input data.'], 400);
+    // } catch (Exception $e) {
     
-           return response()->json(['error' => 'An error occurred while creating the cabin'], 500);
-       }
-    }
+    //        return response()->json(['error' => 'An error occurred while creating the cabin'], 500);
+    //    }
+    // }
 
-    public function show(Cabins $cabin): JsonResponse
-    {
-        try {
-            return response()->json(['data' => $cabin]);
-        } catch (Exception $e) {
+    // public function show(Cabins $cabin): JsonResponse
+    // {
+    //     try {
+    //         return response()->json(['data' => $cabin]);
+    //     } catch (Exception $e) {
        
-            return response()->json(['error' => 'An error occurred while fetching the cabin'], 500);
-        }
+    //         return response()->json(['error' => 'An error occurred while fetching the cabin'], 500);
+    //     }
     }
 
     public function update(Request $request, $cabinId): JsonResponse
@@ -161,6 +247,15 @@ class CabinsController extends Controller
         }
     }
     
+
+    public function truncate(){
+        try{
+            Cabins::truncate();
+             return response()->json(['success' => "Table trancated successfully."]);
+        }catch(Exception $e){
+            return response()->json(['error' => $e]);
+        }
+    }
 
     // public function destroy(Cabins $cabin): JsonResponse
     // {

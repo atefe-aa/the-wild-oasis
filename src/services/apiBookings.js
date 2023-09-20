@@ -1,6 +1,41 @@
 import { getToday } from "../utils/helpers";
-import supabase from "./supabase";
+// import supabase from "./supabase";
 
+const BASE_URL = `http://127.0.0.1:8000/api/bookings`;
+
+export async function getBookings() {
+  const res = await fetch(BASE_URL, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  const { data, error } = await res.json();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Bookings could not be found.");
+  }
+  
+  return data;
+}
+
+
+export async function deleteBooking(id) {
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+  const { success, error } = await res.json();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be deleted.");
+  }
+
+  return success;
+}
+
+
+/*
 export async function getBooking(id) {
   const { data, error } = await supabase
     .from("bookings")
@@ -95,3 +130,5 @@ export async function deleteBooking(id) {
   }
   return data;
 }
+
+*/

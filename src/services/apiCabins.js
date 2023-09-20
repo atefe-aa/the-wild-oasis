@@ -50,7 +50,7 @@ export async function createUpdateCabin(newCabin, id) {
   if (hasImagePath) {
     request = await fetch(url, {
       method: "POST",
-      body: JSON.stringify(newCabin),
+      body: JSON.stringify({newCabin}),
       headers: { "Content-Type": "application/json" },
     });
   }
@@ -58,7 +58,7 @@ export async function createUpdateCabin(newCabin, id) {
   if (!hasImagePath) {
     request = await fetch(url, {
       method: "POST",
-      body: formData,
+      body: {formData},
     });
   }
 
