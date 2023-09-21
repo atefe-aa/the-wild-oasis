@@ -16,7 +16,6 @@ export async function getSettings() {
 
 // We expect a newSetting object that looks like {setting: newValue}
 export async function updateSetting(newSetting, id=1) {
-  console.log(newSetting)
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
     body: JSON.stringify(newSetting),
