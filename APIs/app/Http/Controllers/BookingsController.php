@@ -15,26 +15,10 @@ class BookingsController extends Controller
     public function index(): JsonResponse
     {
         try {
-             // Eager load the relationships to avoid N+1 query problem
-             $bookings = Bookings::all();
-
-             // Transform the data to include guest name, email, and cabin name
-             $bookingData = $bookings->map(function ($booking) {
-                 return [
-                     'bookingId'=> $booking->id,
-                     "created_at"=> $booking->created_at,
-                     'start_date'=> $booking->start_date,
-                     'end_date'=> $booking->end_date,
-                     'num_nights'=> $booking->num_nights,
-                     'num_guests'=> $booking->num_guests,
-                     'total_price'=> $booking->total_price,
-                     'status'=> $booking->status,
-                     'guest' =>["guestName" => $booking->guest->full_name,"email"=> $booking->guest->email],
-                     'cabin' => ["cabinName" => $booking->cabin->name],
-                 ];
-             });
- 
-             return response()->json(['data' => $bookingData]);
+          
+             $bookings = Bookings::with('cabin', 'guest')->paginate(10);
+        
+             return response()->json(['data' => $bookings]);
         } catch (Exception $e) {
             return response()->json(['error' => 'An error occurred while fetching bookings'], 500);
         }

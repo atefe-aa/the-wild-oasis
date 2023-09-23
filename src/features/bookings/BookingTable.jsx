@@ -5,9 +5,10 @@ import Empty from "../../ui/Empty";
 import { useBookings } from "./useBookings";
 import Spinner from "../../ui/Spinner";
 import { useSearchParams } from "react-router-dom";
+import Pagination from "../../ui/Pagination";
 
 function BookingTable() {
-  const { bookings, isLoading } = useBookings();
+  const { bookings, isLoading, pageData } = useBookings();
   const [searchParams] = useSearchParams();
   if (isLoading) return <Spinner />;
 
@@ -60,9 +61,12 @@ function BookingTable() {
         <Table.Body
           data={sortedBookings}
           render={(booking) => (
-            <BookingRow key={booking.bookingId} booking={booking} />
+            <BookingRow key={booking.id} booking={booking} />
           )}
         />
+        <Table.Footer>
+          <Pagination pageData={pageData} />
+        </Table.Footer>
       </Table>
     </Menus>
   );

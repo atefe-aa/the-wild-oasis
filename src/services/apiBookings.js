@@ -3,21 +3,24 @@ import { getToday } from "../utils/helpers";
 
 const BASE_URL = `http://127.0.0.1:8000/api/bookings`;
 
-export async function getBookings() {
-  const res = await fetch(BASE_URL, {
+export async function getBookings(page) {
+
+  const url = BASE_URL + `?page=${page}`;
+
+  const res = await fetch(url, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
-  const { data, error } = await res.json();
-
+  const {
+    data: { data: bookings, ...pageData},
+    error,
+  } = await res.json();
   if (error) {
     console.error(error);
     throw new Error("Bookings could not be found.");
   }
-  
-  return data;
+  return { bookings, pageData };
 }
-
 
 export async function deleteBooking(id) {
   const res = await fetch(`${BASE_URL}/${id}`, {
@@ -33,7 +36,6 @@ export async function deleteBooking(id) {
 
   return success;
 }
-
 
 /*
 export async function getBooking(id) {

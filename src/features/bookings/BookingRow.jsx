@@ -36,7 +36,7 @@ const Amount = styled.div`
 
 function BookingRow({
   booking: {
-     bookingId,
+    id: bookingId,
     created_at,
     start_date,
     end_date,
@@ -44,8 +44,8 @@ function BookingRow({
     num_guests,
     total_price,
     status,
-    guest: { guestName, email },
-    cabin: { cabinName },
+    guest: { full_name: guestName, email },
+    cabin: { name: cabinName },
   },
 }) {
   const statusToTagName = {
