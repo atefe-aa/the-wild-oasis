@@ -17,14 +17,13 @@ class BookingsController extends Controller
         try {
           
              $bookings = Bookings::with('cabin', 'guest')->paginate(10);
-        
              return response()->json(['data' => $bookings]);
-        } catch (Exception $e) {
-            return response()->json(['error' => 'An error occurred while fetching bookings'], 500);
+            } catch (Exception $e) {
+                return response()->json(['error' => 'An error occurred while fetching bookings'], 500);
+            }
         }
-    }
 
-
+        
     public function store(Request $request)
     {
     
@@ -33,45 +32,49 @@ class BookingsController extends Controller
             $allBookings = [];
             foreach($requestData as $bookingData){
                 $validator = Validator::make($bookingData, Bookings::validationRules());
-
+                
                 if($validator->fails()){
                     return response()->json(['error' => $validator->errors()], 400);
                 }
-
+                
                 $allBookings[] = Bookings::create($bookingData);
-    
+                
             }
             return response()->json(['data' => $allBookings], 400);
         } 
-
+        
         try {
             $validator = Validator::make($request->all(), Bookings::validationRules());
-    
+            
             if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+                return response()->json(['error' => $validator->errors()], 400);
             }
 
             $booking = Bookings::create($request->all());
 
            return response()->json(['data' => $booking], 201);
        } catch (QueryException $e) {
-        return response()->json(['error' => 'Error creating guest. Check your input data.'], 400);
+        return response()->json(['error' => 'Error creating booking. Check your input data.'], 400);
     } catch (Exception $e) {
     
-           return response()->json(['error' => 'An error occurred while creating the guest'], 500);
+           return response()->json(['error' => 'An error occurred while creating the booking'], 500);
        }
     }
 
     public function show(Bookings $booking): JsonResponse
     {
+        \Log::info("bookings");
         try {
-            return response()->json(['data' => $booking]);
+            $bookingWithRelations = $booking->load('cabin', 'guest');
+            if (!$bookingWithRelations) {
+                return response()->json(['error' => 'Booking not found'], 404);
+            }
+            return response()->json(['data' => $bookingWithRelations]);
         } catch (Exception $e) {
-       
-            return response()->json(['error' => 'An error occurred while fetching the guest'], 500);
+            return response()->json(['error' => 'An error occurred while fetching the booking'], 500);
         }
     }
-
+    
     public function update(Request $request, $bookingId): JsonResponse
     {
         
@@ -79,7 +82,7 @@ class BookingsController extends Controller
             $booking = Bookings::find($bookingId);
     
             if (!$booking) {
-                return response()->json(['error' => 'guest not found'], 404);
+                return response()->json(['error' => 'booking not found'], 404);
             }
  
                 $validator = Validator::make($request->all(),Bookings::validationRules());
@@ -94,9 +97,9 @@ class BookingsController extends Controller
 
             return response()->json(['data' => $booking]);
         } catch (QueryException $e) {
-            return response()->json(['error' => 'Error updating guest. Check your input data.'], 400);
+            return response()->json(['error' => 'Error updating booking. Check your input data.'], 400);
         } catch (Exception $e) {
-            return response()->json(['error' => 'An error occurred while updating the guest'], 500);
+            return response()->json(['error' => 'An error occurred while updating the booking'], 500);
         }
     }
 
@@ -107,14 +110,14 @@ class BookingsController extends Controller
             $booking = Bookings::find($bookingId);
     
             if (!$booking) {
-                return response()->json(['error' => 'guest not found'], 404);
+                return response()->json(['error' => 'booking not found'], 404);
             }
     
             $booking->delete();
     
-            return response()->json(['success' => 'guest deleted successfully']);
+            return response()->json(['success' => 'booking deleted successfully']);
         } catch (Exception $e) {
-            return response()->json(['error' => 'An error occurred while deleting the guest'], 500);
+            return response()->json(['error' => 'An error occurred while deleting the booking'], 500);
         }
     }
 
