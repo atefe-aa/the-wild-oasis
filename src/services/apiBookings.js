@@ -1,10 +1,6 @@
-import { getToday } from "../utils/helpers";
-// import supabase from "./supabase";
-
 const BASE_URL = `http://127.0.0.1:8000/api/bookings`;
 
 export async function getBookings(page) {
-
   const url = BASE_URL + `?page=${page}`;
 
   const res = await fetch(url, {
@@ -12,7 +8,7 @@ export async function getBookings(page) {
     headers: { "Content-Type": "application/json" },
   });
   const {
-    data: { data: bookings, ...pageData},
+    data: { data: bookings, ...pageData },
     error,
   } = await res.json();
   if (error) {
