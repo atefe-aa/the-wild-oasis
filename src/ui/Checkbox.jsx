@@ -35,7 +35,7 @@ function Checkbox({ checked, onChange, disabled = false, id, children }) {
         onChange={onChange}
         disabled={disabled}
       />
-      <label htmlFor={!disabled ? id : ""}>{children}</label>
+      <label htmlFor={id }>{children}</label>
     </StyledCheckbox>
   );
 }

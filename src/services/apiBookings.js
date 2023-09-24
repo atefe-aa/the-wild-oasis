@@ -1,8 +1,8 @@
 const BASE_URL = `http://127.0.0.1:8000/api/bookings`;
 
 export async function getBookings(page) {
-  let  url=BASE_URL;
-  if(page) url = BASE_URL + `?page=${page}`;
+  let url = BASE_URL;
+  if (page) url = BASE_URL + `?page=${page}`;
 
   const res = await fetch(url, {
     method: "GET",
@@ -20,21 +20,18 @@ export async function getBookings(page) {
 }
 
 export async function getBooking(id) {
-const url = BASE_URL +`/${id}`;
+  const url = BASE_URL + `/${id}`;
   const res = await fetch(url, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
-  const {
-    data,
-    error,
-  } = await res.json();
+  const { data, error } = await res.json();
   if (error) {
     console.error(error);
     throw new Error("Booking could not be found.");
   }
   return data;
-  }
+}
 
 export async function deleteBooking(id) {
   const res = await fetch(`${BASE_URL}/${id}`, {
@@ -51,9 +48,23 @@ export async function deleteBooking(id) {
   return success;
 }
 
-  
-  // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
-  /*
+export async function updateBooking(id, obj) {
+  const url = BASE_URL + `/${id}`;
+  const res = await fetch(url, {
+    method: "PATCH",
+    body: JSON.stringify(obj),
+    headers: { "Content-Type": "application/json" },
+  });
+  const { data, error } = await res.json();
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be updated");
+  }
+  return data;
+}
+
+// Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
+/*
 export async function getBookingsAfterDate(date) {
   const { data, error } = await supabase
     .from("bookings")

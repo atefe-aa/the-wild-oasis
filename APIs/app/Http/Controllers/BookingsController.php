@@ -53,9 +53,9 @@ class BookingsController extends Controller
             $booking = Bookings::create($request->all());
 
            return response()->json(['data' => $booking], 201);
-       } catch (QueryException $e) {
-        return response()->json(['error' => 'Error creating booking. Check your input data.'], 400);
-    } catch (Exception $e) {
+        } catch (QueryException $e) {
+            return response()->json(['error' => 'Error creating booking. Check your input data.'], 400);
+        } catch (Exception $e) {
     
            return response()->json(['error' => 'An error occurred while creating the booking'], 500);
        }
@@ -63,7 +63,7 @@ class BookingsController extends Controller
 
     public function show(Bookings $booking): JsonResponse
     {
-        \Log::info("bookings");
+        // \Log::info("bookings");
         try {
             $bookingWithRelations = $booking->load('cabin', 'guest');
             if (!$bookingWithRelations) {
@@ -77,24 +77,20 @@ class BookingsController extends Controller
     
     public function update(Request $request, $bookingId): JsonResponse
     {
-        
+       
         try {
             $booking = Bookings::find($bookingId);
-    
             if (!$booking) {
                 return response()->json(['error' => 'booking not found'], 404);
             }
  
                 $validator = Validator::make($request->all(),Bookings::validationRules());
 
-          
-
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 400);
             }
 
-            $booking->update([$request->all()]);
-
+            $booking->update($request->all());
             return response()->json(['data' => $booking]);
         } catch (QueryException $e) {
             return response()->json(['error' => 'Error updating booking. Check your input data.'], 400);
