@@ -13,7 +13,7 @@ import Spinner from "../../ui/Spinner";
 import Checkbox from "../../ui/Checkbox";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "../../utils/helpers";
-import { useCheckin } from "./useCheckin";
+import { useCheck } from "./useCheck";
 import { useSettings } from "../settings/useSettings";
 
 const Box = styled.div`
@@ -37,7 +37,7 @@ function CheckinBooking() {
   }, [booking]);
 
   const moveBack = useMoveBack();
-  const { checkin, isCheckingIn } = useCheckin();
+  const { check, isChecking } = useCheck("in");
 
   if (isLoading || isLoadingSettings) return <Spinner />;
 
@@ -66,7 +66,7 @@ function CheckinBooking() {
         total_price: total_price + optionalBreakfastPrice,
         extras_price: optionalBreakfastPrice,
       };
-    checkin({ bookingId, obj });
+    check({ bookingId, obj });
   }
 
   return (
@@ -87,7 +87,7 @@ function CheckinBooking() {
               setAddBreakfast((add) => !add);
               setConfirmPaid(false);
             }}
-            disabled={isCheckingIn}
+            disabled={isChecking}
           >
             Want to add breakfast for {formatCurrency(optionalBreakfastPrice)}?
           </Checkbox>
@@ -99,7 +99,7 @@ function CheckinBooking() {
           checked={confirmPaid}
           id="confirm"
           onChange={() => setConfirmPaid((confirmPaid) => !confirmPaid)}
-          disabled={confirmPaid || isCheckingIn}
+          disabled={confirmPaid || isChecking}
         >
           I confirm that {guest.full_name} has paid the total amount of{" "}
           {!addBreakfast
@@ -113,7 +113,7 @@ function CheckinBooking() {
       </Box>
 
       <ButtonGroup>
-        <Button onClick={handleCheckin} disabled={!confirmPaid || isCheckingIn}>
+        <Button onClick={handleCheckin} disabled={!confirmPaid || isChecking}>
           Check in booking #{bookingId}
         </Button>
         <Button $variation="secondary" onClick={moveBack}>
