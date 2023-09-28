@@ -1,10 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\CabinsController;
 use App\Http\Controllers\GuestsController;
 use App\Http\Controllers\SettingsController;
-use App\Http\Controllers\BookingsController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,25 +14,30 @@ use App\Http\Controllers\BookingsController;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
 |
 */
 
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+});
+
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/signup', [AuthController::class, 'signup']);
+Route::post('/logout', [AuthController::class, 'logout']);
 
 //cabins
 Route::apiResource('cabins', CabinsController::class);
-Route::post('cabins/{cabin}', [CabinsController::class, 'update']);//this one must be a post request because it's not possible to send a file(the cabin image) through a put request!
-Route::get('cabins/empty', [CabinsController::class, 'truncate']);
+Route::post('cabins/{cabin}', [CabinsController::class, 'update']); //this one must be a post request because it's not possible to send a file(the cabin image) through a put request!
 
 //guests
 Route::apiResource('guests', GuestsController::class);
-Route::get('guests/empty', [GuestsController::class, 'truncate']);
 
 //bookings
 Route::apiResource('bookings', BookingsController::class);
-Route::get('bookings/empty', [BookingsController::class, 'truncate']);
 
 //settings
 Route::apiResource('settings', SettingsController::class);
-

@@ -1,4 +1,6 @@
-const BASE_URL = `http://127.0.0.1:8000/api/settings`;
+import { API_BASE_URL } from "../utils/constants";
+
+const BASE_URL = API_BASE_URL + "/settings";
 
 export async function getSettings() {
   const res = await fetch(BASE_URL, {
@@ -15,7 +17,7 @@ export async function getSettings() {
 }
 
 // We expect a newSetting object that looks like {setting: newValue}
-export async function updateSetting(newSetting, id=1) {
+export async function updateSetting(newSetting, id = 1) {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
     body: JSON.stringify(newSetting),

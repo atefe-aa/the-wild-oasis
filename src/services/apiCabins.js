@@ -1,4 +1,6 @@
-const BASE_URL = `http://127.0.0.1:8000/api/cabins`;
+import { API_BASE_URL } from "../utils/constants";
+
+const BASE_URL = API_BASE_URL + "/cabins";
 const storagePath = "http://127.0.0.1:8000/storage/cabins/";
 
 export async function getCabins() {
