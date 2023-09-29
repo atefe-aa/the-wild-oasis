@@ -19,25 +19,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/signup', [AuthController::class, 'signup']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::post('/logout', [AuthController::class, 'logout']);
+    
+    //cabins
+    Route::apiResource('cabins', CabinsController::class);
+    Route::post('cabins/{cabin}', [CabinsController::class, 'update']); //this one must be a post request because it's not possible to send a file(the cabin image) through a put request!
+    
+    //guests
+    Route::apiResource('guests', GuestsController::class);
+    
+    //bookings
+    Route::apiResource('bookings', BookingsController::class);
+    
+    //settings
+    Route::apiResource('settings', SettingsController::class);
 });
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/signup', [AuthController::class, 'signup']);
-Route::post('/logout', [AuthController::class, 'logout']);
 
-//cabins
-Route::apiResource('cabins', CabinsController::class);
-Route::post('cabins/{cabin}', [CabinsController::class, 'update']); //this one must be a post request because it's not possible to send a file(the cabin image) through a put request!
-
-//guests
-Route::apiResource('guests', GuestsController::class);
-
-//bookings
-Route::apiResource('bookings', BookingsController::class);
-
-//settings
-Route::apiResource('settings', SettingsController::class);

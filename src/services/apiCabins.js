@@ -6,7 +6,7 @@ const storagePath = "http://127.0.0.1:8000/storage/cabins/";
 export async function getCabins() {
   const res = await fetch(BASE_URL, {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
   });
   const { data, error } = await res.json();
 
@@ -21,7 +21,7 @@ export async function getCabins() {
 export async function deleteCabin(id) {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
   });
   const { success, error } = await res.json();
 
@@ -46,25 +46,28 @@ export async function createUpdateCabin(newCabin, id) {
   const hasImagePath = Boolean(newCabin.image?.startsWith?.(storagePath));
 
   let url = BASE_URL;
-  if(id) url =  `${BASE_URL}/${id}`;
+  if (id) url = `${BASE_URL}/${id}`;
 
   let request = "";
   if (hasImagePath) {
     request = await fetch(url, {
       method: "POST",
-      body: JSON.stringify({newCabin}),
-      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ newCabin }),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
     });
   }
 
   if (!hasImagePath) {
     request = await fetch(url, {
       method: "POST",
-      body: {formData},
+      body: { formData },
     });
   }
 
-  const res =  request;
+  const res = request;
 
   const { data, success, error } = await res.json();
 
@@ -79,5 +82,5 @@ export async function createUpdateCabin(newCabin, id) {
     throw new Error("Error creating cabin.");
   }
 
-  return {success, data};
+  return { success, data };
 }

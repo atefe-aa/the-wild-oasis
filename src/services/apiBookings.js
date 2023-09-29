@@ -8,7 +8,7 @@ export async function getBookings(page) {
 
   const res = await fetch(url, {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
   });
   const {
     data: { data: bookings, ...pageData },
@@ -25,7 +25,7 @@ export async function getBooking(id) {
   const url = BASE_URL + `/${id}`;
   const res = await fetch(url, {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
   });
   const { data, error } = await res.json();
   if (error) {
@@ -38,7 +38,7 @@ export async function getBooking(id) {
 export async function deleteBooking(id) {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
   });
   const { success, error } = await res.json();
 
@@ -55,7 +55,7 @@ export async function updateBooking(id, obj) {
   const res = await fetch(url, {
     method: "PATCH",
     body: JSON.stringify(obj),
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
   });
   const { data, error } = await res.json();
   if (error) {

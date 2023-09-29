@@ -5,7 +5,7 @@ const BASE_URL = API_BASE_URL + "/settings";
 export async function getSettings() {
   const res = await fetch(BASE_URL, {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json",  Accept: "application/json"  },
   });
   const { data, error } = await res.json();
 
@@ -21,7 +21,7 @@ export async function updateSetting(newSetting, id = 1) {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
     body: JSON.stringify(newSetting),
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json",  Accept: "application/json"  },
   });
 
   const { error, data, success } = await res.json();
