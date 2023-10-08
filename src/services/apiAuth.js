@@ -1,6 +1,8 @@
 import Cookies from "js-cookie";
 import { API_BASE_URL } from "../utils/constants";
 
+const accessToken = Cookies.get("access_token");
+
 export async function login({ email, password }) {
   if (!email || !password) return;
 
@@ -39,7 +41,6 @@ export async function login({ email, password }) {
 }
 
 export async function getCurrentUser() {
-  const accessToken = Cookies.get("access_token");
   if (!accessToken) return null;
 
   const res = await fetch(API_BASE_URL + "/user", {
@@ -58,3 +59,63 @@ export async function getCurrentUser() {
 
   return data;
 }
+
+export async function logout() {
+  if (!accessToken) return null;
+
+  try {
+    const res = await fetch(API_BASE_URL + "/logout", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!res.ok) {
+      console.error(`Logout request failed with status ${res.status}`);
+      throw new Error("Logout request failed");
+    }
+
+    const responseBody = await res.text();
+
+    if (responseBody) {
+      try {
+        const responseData = JSON.parse(responseBody);
+
+        if (responseData.message) {
+          console.error(responseData.message);
+          throw new Error("Logging out failed.");
+        }
+      } catch (jsonError) {
+        console.error("Error parsing JSON response:", jsonError);
+        throw new Error("Logout failed due to JSON parsing error.");
+      }
+    }
+  } catch (error) {
+    console.error("Error during logging out:", error);
+    throw new Error("Logout failed");
+  }
+}
+
+// export async function logout() {
+//   if (!accessToken) return null;
+
+//   try {
+//     const res = await fetch(API_BASE_URL + "/logout", {
+//       method: "POST",
+//       headers: {
+//         Accept: "application/json",
+//         authorization: `Bearer ${accessToken}`,
+//       },
+//     });
+//     const { message } = await res.json();
+//     if (message) {
+//       console.error(message);
+//       throw new Error("Logging out failed.");
+//     }
+//   } catch (error) {
+//     console.error("Error during logging out:", error);
+//     throw new Error("Logout failed");
+//   }
+// }

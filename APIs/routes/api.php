@@ -28,7 +28,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return new UserResource($request->user());
     });
     
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('logout', [AuthController::class, 'logout']);
     
     //cabins
     Route::apiResource('cabins', CabinsController::class);
