@@ -3,6 +3,26 @@ import { API_BASE_URL } from "../utils/constants";
 
 const accessToken = Cookies.get("access_token");
 
+export async function signup(userData) {
+  try {
+    const res = await fetch(API_BASE_URL + "/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new error("Somthing went wrong while signing up!");
+  }
+}
+
 export async function login({ email, password }) {
   if (!email || !password) return;
 
