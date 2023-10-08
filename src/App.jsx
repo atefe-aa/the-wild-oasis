@@ -8,6 +8,7 @@ import Users from "./pages/Users";
 import Settings from "./pages/Settings";
 import Account from "./pages/Account";
 import Login from "./pages/Login";
+import LoginFormTest from "./pages/LoginFormTest";
 import PageNotFound from "./pages/PageNotFound";
 import AppLayout from "./ui/AppLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -50,6 +51,7 @@ function App() {
             <Route path="account" element={<Account />} />
           </Route>
           <Route path="login" element={<Login />} />
+          <Route path="loginTest" element={<LoginFormTest />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </BrowserRouter>

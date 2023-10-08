@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('max_capacity');
             $table->float('regular_price');
             $table->float('discount')->nullable();
-            $table->string('description');
+            $table->longText('description');
             $table->string('status')->nullable();
             $table->timestamps();
         });

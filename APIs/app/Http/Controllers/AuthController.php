@@ -53,8 +53,10 @@ class AuthController extends Controller
                     'user' => $user,
                     'token' => $token
                 ]
-            ]); // Replace 'Your response content' with your actual response
-            $response->withCookie(Cookie::make('access_token', $token, $minutes)); // $minutes is the cookie duration in minutes
+            ]); 
+            // $response->withCookie(Cookie::make('access_token', $token, $minutes, '*', 'localhost:5173', true, true));
+
+            // $response->withCookie(Cookie::make('access_token', $token, $minutes)); // $minutes is the cookie duration in minutes
             return $response;
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred'], 500);

@@ -1,31 +1,53 @@
+import Cookies from "js-cookie";
 import { API_BASE_URL } from "../utils/constants";
 
 const BASE_URL = API_BASE_URL + "/bookings";
+const accessToken = Cookies.get("access_token");
 
 export async function getBookings(page) {
+  if (!accessToken) return null;
+
   let url = BASE_URL;
   if (page) url = BASE_URL + `?page=${page}`;
 
   const res = await fetch(url, {
+    // mode: "no-cors",
     method: "GET",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
+    // credentials: "include",
   });
+
   const {
     data: { data: bookings, ...pageData },
     error,
+    message,
   } = await res.json();
   if (error) {
     console.error(error);
     throw new Error("Bookings could not be found.");
   }
+  if (message) {
+    console.error(message);
+    throw new Error(message);
+  }
   return { bookings, pageData };
 }
 
 export async function getBooking(id) {
+  if (!accessToken) return null;
+
   const url = BASE_URL + `/${id}`;
   const res = await fetch(url, {
     method: "GET",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
   });
   const { data, error } = await res.json();
   if (error) {
@@ -36,9 +58,15 @@ export async function getBooking(id) {
 }
 
 export async function deleteBooking(id) {
+  if (!accessToken) return null;
+
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
   });
   const { success, error } = await res.json();
 
@@ -51,11 +79,17 @@ export async function deleteBooking(id) {
 }
 
 export async function updateBooking(id, obj) {
+  if (!accessToken) return null;
+
   const url = BASE_URL + `/${id}`;
   const res = await fetch(url, {
     method: "PATCH",
     body: JSON.stringify(obj),
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
   });
   const { data, error } = await res.json();
   if (error) {

@@ -28,39 +28,7 @@ class CabinsController extends Controller
 
 
     public function store(Request $request)
-    {
-
-       $requestData = $request->all();
-        if(is_array($requestData[0])){
-            $allCabins = [];
-            foreach($requestData as $cabinData){
-                $validator = Validator::make($cabinData,[
-                    'name' =>'required|string',
-                    'regular_price' => 'required',
-                    'max_capacity' => 'required',
-                    'description' => 'string',
-                    'image' => ['required','string'], 
-                ]);
-
-                if($validator->fails()){
-                    return response()->json(['error' => $validator->errors()], 400);
-                }
-
-                $cabin = new Cabins;
-                $cabin->name =  $cabinData['name'];
-                $cabin->regular_price = $cabinData["regular_price"];
-                $cabin->max_capacity = $cabinData["max_capacity"];
-                $cabin->description = $cabinData["description"];
-                $cabin->discount = $cabinData["discount"];
-                $cabin->image = $cabinData['image'];
-                $cabin->save();
-
-                $allCabins[] = $cabin;
-            }
-            return response()->json(['data' => $allCabins], 400);
-        } 
-        
-        
+    {       
         
         //for duplicating the cabin image wil be a url(string) then it needs a different validation
         try{
@@ -104,8 +72,11 @@ class CabinsController extends Controller
 
             return response()->json(['data' => $cabin], 201);
             } catch (QueryException $e) {
+                // \Log::error($e);
                 return response()->json(['error' => 'Error creating cabin. Check your input data.'], 400);
             } catch (Exception $e) {
+                // \Log::error($e);
+
 
                 return response()->json(['error' => 'An error occurred while creating the cabin'], 500);
             }

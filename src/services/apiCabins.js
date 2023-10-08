@@ -1,12 +1,21 @@
+import Cookies from "js-cookie";
 import { API_BASE_URL } from "../utils/constants";
 
 const BASE_URL = API_BASE_URL + "/cabins";
 const storagePath = "http://127.0.0.1:8000/storage/cabins/";
 
+const accessToken = Cookies.get("access_token");
+
 export async function getCabins() {
+  if (!accessToken) return null;
+
   const res = await fetch(BASE_URL, {
     method: "GET",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
   });
   const { data, error } = await res.json();
 
@@ -19,9 +28,15 @@ export async function getCabins() {
 }
 
 export async function deleteCabin(id) {
+  if (!accessToken) return null;
+
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
   });
   const { success, error } = await res.json();
 
@@ -35,6 +50,8 @@ export async function deleteCabin(id) {
 
 //use formData so you don't need JSON.stringify which would prevent image to be uploaded
 export async function createUpdateCabin(newCabin, id) {
+  if (!accessToken) return null;
+
   const formData = new FormData();
   formData.append("name", newCabin.name);
   formData.append("regular_price", newCabin.regular_price);
@@ -52,10 +69,11 @@ export async function createUpdateCabin(newCabin, id) {
   if (hasImagePath) {
     request = await fetch(url, {
       method: "POST",
-      body: JSON.stringify({ newCabin }),
+      body: JSON.stringify(newCabin),
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        authorization: `Bearer ${accessToken}`,
       },
     });
   }
@@ -63,7 +81,11 @@ export async function createUpdateCabin(newCabin, id) {
   if (!hasImagePath) {
     request = await fetch(url, {
       method: "POST",
-      body: { formData },
+      headers: {
+        Accept: "application/json",
+        authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
     });
   }
 
