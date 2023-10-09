@@ -5,15 +5,25 @@ import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 
 import { useUpdateUser } from "./useUpdateUser";
+import { useUser } from "./useUser";
 
 function UpdatePasswordForm() {
   const { register, handleSubmit, formState, getValues, reset } = useForm();
   const { errors } = formState;
 
+  const {
+    user: { id: userId },
+  } = useUser();
   const { updateUser, isUpdating } = useUpdateUser();
 
-  function onSubmit({ password }) {
-    updateUser({ password }, { onSuccess: reset });
+  function onSubmit({ password, password_confirmation }) {
+    // console.log(password)
+    const userData = {password, password_confirmation};
+
+    updateUser(
+      { userData , userId },
+      { onSuccess: reset }
+    );
   }
 
   return (
@@ -39,14 +49,14 @@ function UpdatePasswordForm() {
 
       <FormRow
         label="Confirm password"
-        error={errors?.passwordConfirm?.message}
+        error={errors?.password_confirmation?.message}
       >
         <Input
           type="password"
           autoComplete="new-password"
-          id="passwordConfirm"
+          id="password_confirmation"
           disabled={isUpdating}
-          {...register("passwordConfirm", {
+          {...register("password_confirmation", {
             required: "This field is required",
             validate: (value) =>
               getValues().password === value || "Passwords need to match",
@@ -54,7 +64,7 @@ function UpdatePasswordForm() {
         />
       </FormRow>
       <FormRow>
-        <Button onClick={reset} type="reset" variation="secondary">
+        <Button onClick={reset} type="reset" $variation="secondary">
           Cancel
         </Button>
         <Button disabled={isUpdating}>Update password</Button>

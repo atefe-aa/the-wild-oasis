@@ -118,24 +118,42 @@ export async function logout() {
   }
 }
 
-// export async function logout() {
-//   if (!accessToken) return null;
+export async function updateCurrentUser({ userData, userId }) {
+  // console.log(accessToken);
+  console.log("userrr",JSON.stringify(userData));
+  //1. Update the password or the name
+  if (!userData?.avatar) {
+    const res = await fetch(`${API_BASE_URL}/user/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(userData),
+    });
+    const { data, error } = await res.json();
+    if (error) throw new Error("Something went wrong updating user data.");
+    // console.log(data);
+    return data;
+  } else {
+    const formData = new FormData();
+    if(userData?.name) formData.append("name", userData.name);
+    formData.append("avatar", userData.avatar);
 
-//   try {
-//     const res = await fetch(API_BASE_URL + "/logout", {
-//       method: "POST",
-//       headers: {
-//         Accept: "application/json",
-//         authorization: `Bearer ${accessToken}`,
-//       },
-//     });
-//     const { message } = await res.json();
-//     if (message) {
-//       console.error(message);
-//       throw new Error("Logging out failed.");
-//     }
-//   } catch (error) {
-//     console.error("Error during logging out:", error);
-//     throw new Error("Logout failed");
-//   }
-// }
+    const res = await fetch(`${API_BASE_URL}/user/${userId}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    });
+    const { data, error } = await res.json();
+    if (error) throw new Error("Something went wrong updating user data.");
+    // console.log(data);
+    return data;
+  }
+
+  //2. If there is avatar to update , update user again
+}

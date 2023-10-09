@@ -8,7 +8,7 @@ import SpinnerMini from "../../ui/SpinnerMini";
 
 function LoginForm() {
   const [email, setEmail] = useState("atefe@dfgdfg.com");
-  const [password, setPassword] = useState("12345Aa@12345");
+  const [password, setPassword] = useState("36925814");
   const { login, isLoading } = useLogin();
 
   function handleSubmit(e) {

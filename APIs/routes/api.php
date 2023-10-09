@@ -5,6 +5,7 @@ use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\CabinsController;
 use App\Http\Controllers\GuestsController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\UserController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,7 +27,8 @@ Route::post('signup', [AuthController::class, 'signup']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return new UserResource($request->user());
-    });
+    }); 
+    Route::post('user/{id}', [UserController::class, 'update']);
     
     Route::post('logout', [AuthController::class, 'logout']);
     

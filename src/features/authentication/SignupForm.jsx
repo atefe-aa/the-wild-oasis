@@ -5,7 +5,6 @@ import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 import { useSignup } from "./useSignup";
 
-
 function SignupForm() {
   const { register, formState, getValues, handleSubmit, reset } = useForm();
   const { errors } = formState;
@@ -79,7 +78,7 @@ function SignupForm() {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button $variation="secondary" type="reset">
+        <Button onClick={reset} $variation="secondary" type="reset">
           Cancel
         </Button>
         <Button disabled={isLoading}>Create new user</Button>
