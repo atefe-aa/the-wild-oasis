@@ -12,8 +12,8 @@ function DarkModeProvider({ children }) {
         document.documentElement.classList?.add("dark-mode");
         document.documentElement.classList?.remove("light-mode");
       } else {
-        document.documentEElement.classList?.add("light-mode");
-        document.documentElement.classList?.remove("dark-mode");
+        document.documentEElement?.classList?.add("light-mode");
+        document.documentElement?.classList?.remove("dark-mode");
       }
     },
     [isDarkMode]

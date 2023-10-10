@@ -21,8 +21,20 @@ class BookingsController extends Controller
             } catch (Exception $e) {
                 return response()->json(['error' => 'An error occurred while fetching bookings'], 500);
             }
-        }
+    }
 
+    public function getAfterDate(Request $request){
+        try {
+            $incommingData = $request->all();
+            $column = $incommingData['conditionColumn'];//The column can be "created_at" for bookings or "start_date" for stays
+            $value = $incommingData['value'];
+            
+            $bookings = Bookings::where($column,'>', $value)->with('cabin', 'guest')->get();
+            return response()->json(['data' => $bookings]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'An error occurred while fetching bookings'], 500);
+           }
+    }
         
     public function store(Request $request)
     {

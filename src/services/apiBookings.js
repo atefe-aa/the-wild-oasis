@@ -98,21 +98,82 @@ export async function updateBooking(id, obj) {
   }
   return data;
 }
+// Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
+export async function getBookingsAfterDate(date) {
+  if (!accessToken) return null;
+
+  const url = `${BASE_URL}/last`;
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      conditionColumn: "created_at",
+      value: date,
+    }),
+  });
+
+  const { data, error, message } = await res.json();
+  if (error) {
+    console.error(error);
+    throw new Error("Bookings could not be found.");
+  }
+  if (message) {
+    console.error(message);
+    throw new Error(message);
+  }
+  return data;
+}
+
+// Returns all STAYS that are were created after the given date
+export async function getStaysAfterDate(date) {
+  if (!accessToken) return null;
+
+  const url = `${BASE_URL}/last`;
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      conditionColumn: "start_date",
+      value: date,
+    }),
+  });
+
+  const { data, error, message } = await res.json();
+  if (error) {
+    console.error(error);
+    throw new Error("Bookings could not be found.");
+  }
+  if (message) {
+    console.error(message);
+    throw new Error(message);
+  }
+  return data;
+}
 
 // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
 /*
 export async function getBookingsAfterDate(date) {
   const { data, error } = await supabase
-    .from("bookings")
-    .select("created_at, totalPrice, extrasPrice")
-    .gte("created_at", date)
-    .lte("created_at", getToday({ end: true }));
-
+  .from("bookings")
+  .select("created_at, totalPrice, extrasPrice")
+  .gte("created_at", date)
+  .lte("created_at", getToday({ end: true }));
+  
   if (error) {
     console.error(error);
     throw new Error("Bookings could not get loaded");
   }
-
+  
   return data;
 }
 

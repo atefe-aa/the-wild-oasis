@@ -90,7 +90,6 @@ const GlobalStyles = createGlobalStyle`:root {
     --border-radius-sm: 5px;
     --border-radius-md: 7px;
     --border-radius-lg: 9px;
-  
   }
   
   *,
