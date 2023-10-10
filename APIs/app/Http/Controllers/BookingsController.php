@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Bookings;
 use Exception;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,6 +31,48 @@ class BookingsController extends Controller
             $value = $incommingData['value'];
             
             $bookings = Bookings::where($column,'>', $value)->with('cabin', 'guest')->get();
+            return response()->json(['data' => $bookings]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'An error occurred while fetching bookings'], 500);
+           }
+    }
+    public function conditionalIndex(Request $request){
+        try {
+            /** the request structure must be like: 
+             * ["where"=>[["column"=>"status", "oprator"=> "=", "value"=>"confirmed"],
+             * ["column"=>"created_at", "oprator"=> ">", "value"=>"2023-10-12T08:27:08.117Z"]], 
+             * 
+             * "orwhere"=>[["column"=>"status", "oprator"=> "=", "value"=>"confirmed"],
+             * ["column"=>"created_at", "oprator"=> ">", "value"=>"2023-10-12T08:27:08.117Z"]]]
+             * as many condition as wish. */
+            $conditions = $request->all();
+            $query= Bookings::query();
+            if(isset($conditions['where'])){
+                $where = [];
+                foreach($conditions['where'] as  $condition){
+                    $conditionArray = [];
+                    foreach($condition as $value){
+                        $conditionArray[] = $value;
+                    }
+                    $where[] = $conditionArray;
+                }
+                $query->where($where);
+            }
+
+            if(isset($conditions['orwhere'])){
+                $orwhere = [];
+                foreach($conditions['orwhere'] as $index => $condition){
+                    $conditionArray = [];
+                    foreach($condition as $key => $value){
+                        $conditionArray[] = $value;
+                    }
+                    $orwhere[] = $conditionArray;
+                }
+                $query->orwhere($orwhere);
+            }
+            
+            $bookings = $query->with('cabin', 'guest')->get();
+
             return response()->json(['data' => $bookings]);
         } catch (Exception $e) {
             return response()->json(['error' => 'An error occurred while fetching bookings'], 500);

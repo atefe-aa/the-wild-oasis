@@ -41,7 +41,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     
     //bookings
     Route::apiResource('bookings', BookingsController::class);
-    Route::post('bookings/last', [BookingsController::class, 'getAfterDate']);
+    Route::post('bookings/where', [BookingsController::class, 'conditionalIndex']);
     
     //settings
     Route::apiResource('settings', SettingsController::class);

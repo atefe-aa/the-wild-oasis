@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import { API_BASE_URL } from "../utils/constants";
+import { getToday } from "../utils/helpers";
 
 const BASE_URL = API_BASE_URL + "/bookings";
 const accessToken = Cookies.get("access_token");
@@ -101,8 +102,8 @@ export async function updateBooking(id, obj) {
 // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
 export async function getBookingsAfterDate(date) {
   if (!accessToken) return null;
-
-  const url = `${BASE_URL}/last`;
+ 
+  const url = `${BASE_URL}/where`;
 
   const res = await fetch(url, {
     method: "POST",
@@ -112,8 +113,7 @@ export async function getBookingsAfterDate(date) {
       authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
-      conditionColumn: "created_at",
-      value: date,
+      where:[ { column: "created_at", oprator: ">", value: date }],
     }),
   });
 
@@ -133,7 +133,7 @@ export async function getBookingsAfterDate(date) {
 export async function getStaysAfterDate(date) {
   if (!accessToken) return null;
 
-  const url = `${BASE_URL}/last`;
+  const url = `${BASE_URL}/where`;
 
   const res = await fetch(url, {
     method: "POST",
@@ -143,8 +143,7 @@ export async function getStaysAfterDate(date) {
       authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
-      conditionColumn: "start_date",
-      value: date,
+      where:[ { column: "start_date", oprator: ">", value: date }],
     }),
   });
 
@@ -159,6 +158,63 @@ export async function getStaysAfterDate(date) {
   }
   return data;
 }
+
+export async function getStaysTodayActivity() {
+  if (!accessToken) return null;
+
+  const url = `${BASE_URL}/where`;
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      where: [
+        { column: "status", oprator: "=", value: "unconfirmed" },
+        { column: "start_date", oprator: "=", value: getToday() },
+      ],
+      orwhere: [
+        { column: "status", oprator: "=", value: "checked-in" },
+        { column: "end_date", oprator: "=", value: getToday() },
+      ],
+    }),
+  });
+
+  const { data, error, message } = await res.json();
+  if (error) {
+    console.error(error);
+    throw new Error("Bookings could not be found.");
+  }
+  if (message) {
+    console.error(message);
+    throw new Error(message);
+  }
+  return data;
+}
+
+// Activity means that there is a check in or a check out today
+// export async function getStaysTodayActivity1() {
+//   const { data, error } = await supabase
+//     .from("bookings")
+//     .select("*, guests(fullName, nationality, countryFlag)")
+//     .or(
+//       `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
+//     )
+//     .order("created_at");
+
+//   // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
+//   // (stay.status === 'unconfirmed' && isToday(new Date(stay.startDate))) ||
+//   // (stay.status === 'checked-in' && isToday(new Date(stay.endDate)))
+
+//   if (error) {
+//     console.error(error);
+//     throw new Error("Bookings could not get loaded");
+//   }
+//   return data;
+// }
 
 // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
 /*
@@ -194,26 +250,7 @@ export async function getStaysAfterDate(date) {
   return data;
 }
 
-// Activity means that there is a check in or a check out today
-export async function getStaysTodayActivity() {
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("*, guests(fullName, nationality, countryFlag)")
-    .or(
-      `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
-    )
-    .order("created_at");
 
-  // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
-  // (stay.status === 'unconfirmed' && isToday(new Date(stay.startDate))) ||
-  // (stay.status === 'checked-in' && isToday(new Date(stay.endDate)))
-
-  if (error) {
-    console.error(error);
-    throw new Error("Bookings could not get loaded");
-  }
-  return data;
-}
 
 export async function updateBooking(id, obj) {
   const { data, error } = await supabase
