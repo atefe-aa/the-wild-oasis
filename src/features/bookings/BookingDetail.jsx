@@ -11,11 +11,7 @@ import ButtonText from "../../ui/ButtonText";
 import { useMoveBack } from "../../hooks/useMoveBack";
 import { useBooking } from "./useBooking";
 import Spinner from "../../ui/Spinner";
-import {
-  HiArrowDownOnSquare,
-  HiArrowUpOnSquare,
-  HiTrash,
-} from "react-icons/hi2";
+import { HiTrash } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { useCheck } from "../check-in-out/useCheck";
 import Modal from "../../ui/Modal";
