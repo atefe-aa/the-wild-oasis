@@ -7,7 +7,7 @@ import {
 } from "react-icons/hi2";
 import { formatCurrency } from "../../utils/helpers";
 
-function Stats({ bookings, confirmedStays, numCabins, numDays }) {
+function Stats({ bookings, confirmedStays, numCabins, numDays,checkedIns }) {
   //1.
   const numBookings = bookings?.length;
 
@@ -18,8 +18,8 @@ function Stats({ bookings, confirmedStays, numCabins, numDays }) {
   const checkins = confirmedStays?.length;
 
   //4.
-  const occupation = confirmedStays?.reduce(
-    (acc, cur) => acc + cur.num_nights,
+  const occupation = checkedIns?.reduce(
+    (acc, cur) => acc + Number(cur.num_nights),
     0
   )/(numDays * numCabins)
 
@@ -40,7 +40,7 @@ function Stats({ bookings, confirmedStays, numCabins, numDays }) {
       <Stat
         title="Check ins"
         icon={<HiOutlineCalendarDays />}
-        value={checkins}
+        value={confirmedStays?.length}
         color="indigo"
       />{" "}
       <Stat

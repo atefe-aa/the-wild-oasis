@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cabins;
+use App\Models\Cabin;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -18,7 +18,7 @@ class CabinsController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $cabins = Cabins::all();
+            $cabins = Cabin::all();
             return response()->json(['data' => $cabins]);
         } catch (Exception $e) {
             return response()->json(['error' => 'An error occurred while fetching cabins'], 500);
@@ -47,7 +47,7 @@ class CabinsController extends Controller
             $image = $request->image;
 
             }else{
-                $validator = Validator::make($request->all(),Cabins::validationRules());
+                $validator = Validator::make($request->all(),Cabin::validationRules());
         
                 if ($validator->fails()) {
                     return response()->json(['error' => $validator->errors()], 400);
@@ -61,7 +61,7 @@ class CabinsController extends Controller
         
 
 
-            $cabin = new Cabins;
+            $cabin = new Cabin;
             $cabin->name = $request->input('name');
             $cabin->regular_price = $request->input("regular_price");
             $cabin->max_capacity = $request->input("max_capacity");
@@ -88,7 +88,7 @@ class CabinsController extends Controller
         // \Log::info($request->all());
         
         try {
-            $cabin = Cabins::find($cabinId);
+            $cabin = Cabin::find($cabinId);
     
             if (!$cabin) {
                 return response()->json(['error' => 'Cabin not found'], 404);
@@ -108,7 +108,7 @@ class CabinsController extends Controller
 
                 $image = $request->image;
             }else{
-                $validator = Validator::make($request->all(),Cabins::validationRules());
+                $validator = Validator::make($request->all(),Cabin::validationRules());
 
                 $file_name = time() . "." . $request->image->extension();
                 $request->image->storeAs('public/cabins', $file_name);
@@ -141,7 +141,7 @@ class CabinsController extends Controller
     public function destroy($cabinId): JsonResponse
     {
         try {
-            $cabin = Cabins::find($cabinId);
+            $cabin = Cabin::find($cabinId);
     
             if (!$cabin) {
                 return response()->json(['error' => 'Cabin not found'], 404);
@@ -158,7 +158,7 @@ class CabinsController extends Controller
 
     public function truncate(){
         try{
-            Cabins::truncate();
+            Cabin::truncate();
              return response()->json(['success' => "Table trancated successfully."]);
         }catch(Exception $e){
             return response()->json(['error' => $e]);

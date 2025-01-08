@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Bookings extends Model
+class Booking extends Model
 {
     use HasFactory;
 
@@ -44,11 +44,11 @@ class Bookings extends Model
 
     public function guest()
     {
-        return $this->belongsTo(Guests::class);
+        return $this->belongsTo(Guest::class);
     }
 
     public function cabin()
     {
-        return $this->belongsTo(Cabins::class);
+        return $this->belongsTo(Cabin::class);
     }
 }

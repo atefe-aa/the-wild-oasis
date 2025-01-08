@@ -1,4 +1,4 @@
-import { eachDayOfInterval, format, isSameDay, subDays } from "date-fns";
+import {eachDayOfInterval, format, isSameDay, startOfDay, subDays} from "date-fns";
 import {
   Area,
   AreaChart,
@@ -29,18 +29,28 @@ function SalesChart({ bookings, numDays }) {
     end: new Date(),
   });
 
-  const data = allDates?.map((date) => {
-    return {
-      label: format(date, "MMM dd"),
-      totalSales: bookings
-        ?.filter((booking) => isSameDay(date, new Date(booking.created_at)))
-        .reduce((acc, cur) => acc + cur.total_price, 0),
-      extrasSales: bookings
-        ?.filter((booking) => isSameDay(date, new Date(booking.created_at)))
-        .reduce((acc, cur) => acc + cur.extras_price, 0),
-    };
-  });
-
+    const data = allDates?.map((date) => {
+        return {
+            label: format(date, "MMM dd"),
+            totalSales: bookings
+                ?.filter((booking) =>
+                    isSameDay(
+                        startOfDay(date),
+                        startOfDay(new Date(booking.created_at))
+                    )
+                )
+                .reduce((acc, cur) => acc + cur.total_price, 0),
+            extrasSales: bookings
+                ?.filter((booking) =>
+                    isSameDay(
+                        startOfDay(date),
+                        startOfDay(new Date(booking.created_at))
+                    )
+                )
+                .reduce((acc, cur) => acc + cur.extras_price, 0),
+        };
+    });
+    console.log(data)
   const { isDarkMode } = useDarkMode();
   const colors = isDarkMode
     ? {
@@ -63,8 +73,8 @@ function SalesChart({ bookings, numDays }) {
         {format(allDates?.at(-1), "MMM dd yyyy")}
       </Heading>
 
-      <ResponsiveContainer>
-        <AreaChart data={data} height={300} width="100%">
+      <ResponsiveContainer height={300} width="100%">
+        <AreaChart data={data} height={300} width={500}>
           <XAxis
             dataKey="label"
             tick={{ fill: colors.text }}

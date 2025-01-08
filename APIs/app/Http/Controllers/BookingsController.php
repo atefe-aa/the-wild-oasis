@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Bookings;
+use App\Models\Booking;
 use Exception;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
@@ -17,7 +17,7 @@ class BookingsController extends Controller
     {
         try {
           
-             $bookings = Bookings::with('cabin', 'guest')->paginate(10);
+             $bookings = Booking::with('cabin', 'guest')->paginate(10);
              return response()->json(['data' => $bookings]);
             } catch (Exception $e) {
                 return response()->json(['error' => 'An error occurred while fetching bookings'], 500);
@@ -30,7 +30,7 @@ class BookingsController extends Controller
             $column = $incommingData['conditionColumn'];//The column can be "created_at" for bookings or "start_date" for stays
             $value = $incommingData['value'];
             
-            $bookings = Bookings::where($column,'>', $value)->with('cabin', 'guest')->get();
+            $bookings = Booking::where($column,'>', $value)->with('cabin', 'guest')->get();
             return response()->json(['data' => $bookings]);
         } catch (Exception $e) {
             return response()->json(['error' => 'An error occurred while fetching bookings'], 500);
@@ -46,7 +46,7 @@ class BookingsController extends Controller
              * ["column"=>"created_at", "oprator"=> ">", "value"=>"2023-10-12T08:27:08.117Z"]]]
              * as many condition as wish. */
             $conditions = $request->all();
-            $query= Bookings::query();
+            $query= Booking::query();
             if(isset($conditions['where'])){
                 $where = [];
                 foreach($conditions['where'] as  $condition){
@@ -86,26 +86,26 @@ class BookingsController extends Controller
         if(is_array($requestData[0])){
             $allBookings = [];
             foreach($requestData as $bookingData){
-                $validator = Validator::make($bookingData, Bookings::validationRules());
+                $validator = Validator::make($bookingData, Booking::validationRules());
                 
                 if($validator->fails()){
                     return response()->json(['error' => $validator->errors()], 400);
                 }
                 
-                $allBookings[] = Bookings::create($bookingData);
+                $allBookings[] = Booking::create($bookingData);
                 
             }
             return response()->json(['data' => $allBookings], 400);
         } 
         
         try {
-            $validator = Validator::make($request->all(), Bookings::validationRules());
+            $validator = Validator::make($request->all(), Booking::validationRules());
             
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 400);
             }
 
-            $booking = Bookings::create($request->all());
+            $booking = Booking::create($request->all());
 
            return response()->json(['data' => $booking], 201);
         } catch (QueryException $e) {
@@ -116,7 +116,7 @@ class BookingsController extends Controller
        }
     }
 
-    public function show(Bookings $booking): JsonResponse
+    public function show(Booking $booking): JsonResponse
     {
         // \Log::info("bookings");
         try {
@@ -134,12 +134,12 @@ class BookingsController extends Controller
     {
        
         try {
-            $booking = Bookings::find($bookingId);
+            $booking = Booking::find($bookingId);
             if (!$booking) {
                 return response()->json(['error' => 'booking not found'], 404);
             }
  
-                $validator = Validator::make($request->all(),Bookings::validationRules());
+                $validator = Validator::make($request->all(),Booking::validationRules());
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 400);
@@ -158,7 +158,7 @@ class BookingsController extends Controller
     public function destroy($bookingId): JsonResponse
     {
         try {
-            $booking = Bookings::find($bookingId);
+            $booking = Booking::find($bookingId);
     
             if (!$booking) {
                 return response()->json(['error' => 'booking not found'], 404);
@@ -174,7 +174,7 @@ class BookingsController extends Controller
 
     public function truncate(){
         try{
-            Bookings::truncate();
+            Booking::truncate();
             return response()->json(['success' => "Table trancated successfully."]);
 
         }catch(Exception $e){

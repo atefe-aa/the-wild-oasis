@@ -161,7 +161,6 @@ export async function getStaysAfterDate(date) {
 
 export async function getStaysTodayActivity() {
   if (!accessToken) return null;
-
   const url = `${BASE_URL}/where`;
 
   const res = await fetch(url, {
@@ -174,11 +173,11 @@ export async function getStaysTodayActivity() {
     body: JSON.stringify({
       where: [
         { column: "status", oprator: "=", value: "unconfirmed" },
-        { column: "start_date", oprator: "=", value: getToday() },
+        { column: "start_date", oprator: "<=", value: getToday() },
       ],
       orwhere: [
         { column: "status", oprator: "=", value: "checked-in" },
-        { column: "end_date", oprator: "=", value: getToday() },
+        { column: "end_date", oprator: ">=", value: getToday() },
       ],
     }),
   });

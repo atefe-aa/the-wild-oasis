@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Settings;
+use App\Models\Setting;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -16,19 +16,19 @@ class SettingsController extends Controller
     public function index(): JsonResponse
     {
         try {
-           $settings = Settings::all();
+           $settings = Setting::all();
             return response()->json(['data' => $settings]);
         } catch (Exception $e) {
             return response()->json(['error' => 'An error occurred while fetching settings'], 500);
         }
     }
 
-    public function update(Request $request, Settings $setting): JsonResponse
+    public function update(Request $request, Setting $setting): JsonResponse
     {
         try {
             
             $data = $request->all();
-                $validator = Validator::make($data,Settings::validationRules());
+                $validator = Validator::make($data,Setting::validationRules());
                 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 400);

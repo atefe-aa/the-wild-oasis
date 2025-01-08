@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Guests;
+use App\Models\Guest;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -15,7 +15,7 @@ class GuestsController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $guests = Guests::all();
+            $guests = Guest::all();
             return response()->json(['data' => $guests]);
         } catch (Exception $e) {
             return response()->json(['error' => 'An error occurred while fetching guests'], 500);
@@ -31,26 +31,26 @@ class GuestsController extends Controller
         if(is_array($requestData[0])){
             $gusts = [];
             foreach($requestData as $guestData){
-                $validator = Validator::make($guestData, Guests::validationRules());
+                $validator = Validator::make($guestData, Guest::validationRules());
 
                 if($validator->fails()){
                     return response()->json(['error' => $validator->errors()], 400);
                 }
 
-                $guests[] = Guests::create($guestData);
+                $guests[] = Guest::create($guestData);
             }
             return response()->json(['data' => $gusts], 400);
         } 
        
         try {
 
-            $validator = Validator::make($request->all(), Guests::validationRules());
+            $validator = Validator::make($request->all(), Guest::validationRules());
     
             if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
             }
 
-            $guests[] = Guests::create($request);
+            $guests[] = Guest::create($request);
 
            return response()->json(['data' => $guests], 201);
            
@@ -62,7 +62,7 @@ class GuestsController extends Controller
         }
     }
 
-    public function show(Guests $guest): JsonResponse
+    public function show(Guest $guest): JsonResponse
     {
         try {
             return response()->json(['data' => $guest]);
@@ -76,13 +76,13 @@ class GuestsController extends Controller
     {
         
         try {
-            $guest = Guests::find($guestId);
+            $guest = Guest::find($guestId);
     
             if (!$guest) {
                 return response()->json(['error' => 'guest not found'], 404);
             }
  
-                $validator = Validator::make($request->all(),Guests::validationRules());
+                $validator = Validator::make($request->all(),Guest::validationRules());
 
           
 
@@ -104,7 +104,7 @@ class GuestsController extends Controller
     public function destroy($guestId): JsonResponse
     {
         try {
-            $guest = Guests::find($guestId);
+            $guest = Guest::find($guestId);
     
             if (!$guest) {
                 return response()->json(['error' => 'guest not found'], 404);
@@ -120,7 +120,7 @@ class GuestsController extends Controller
 
     public function truncate(){
         try{
-            Guests::truncate();
+            Guest::truncate();
             return response()->json(['success' => "Table trancated successfully."]);
 
         }catch(Exception $e){
