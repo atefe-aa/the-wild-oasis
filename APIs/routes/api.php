@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('signup', [AuthController::class, 'signup']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
+// Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return new UserResource($request->user());
     }); 
@@ -45,6 +45,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
     
     //settings
     Route::apiResource('settings', SettingsController::class);
-});
-
-
+// });

@@ -83,6 +83,11 @@ class CabinsController extends Controller
 
     }
 
+    public function show(Cabin $cabin)
+    {
+        return response()->json(['data' => $cabin]);
+    }
+
     public function update(Request $request, $cabinId): JsonResponse
     {
         // \Log::info($request->all());

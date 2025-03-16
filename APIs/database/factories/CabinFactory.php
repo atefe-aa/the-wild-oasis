@@ -22,7 +22,7 @@ class CabinFactory extends Factory
             'max_capacity'=>fake()->randomNumber(),
             'regular_price'=>fake()->randomNumber(4),
             'discount'=>fake()->randomNumber(3),
-            'image'=>fake()->imageUrl(),
+            'image'=>asset('/cabins/cabin-00'.random_int(1,8).'.jpg'),
             'status'=>fake()->randomElement([0,1]),
         ];
     }
