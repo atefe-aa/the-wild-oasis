@@ -19,9 +19,9 @@ class CabinFactory extends Factory
         return [
             'name'=>fake()->word,
             'description'=>fake()->paragraph,
-            'max_capacity'=>fake()->randomNumber(),
-            'regular_price'=>fake()->randomNumber(4),
-            'discount'=>fake()->randomNumber(3),
+            'max_capacity'=>random_int(1,10),
+            'regular_price'=>random_int(100,9999),
+            'discount'=>random_int(0,50),
             'image'=>asset('/cabins/cabin-00'.random_int(1,8).'.jpg'),
             'status'=>fake()->randomElement([0,1]),
         ];
