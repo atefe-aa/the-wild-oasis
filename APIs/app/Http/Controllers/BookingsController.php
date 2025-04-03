@@ -130,6 +130,18 @@ class BookingsController extends Controller
         }
     }
     
+    public function bookedDates($cabinId){
+        $today = now(); 
+        $bookings = Booking::whereCabinId($cabinId)
+        ->where(function ($query) use ($today) {
+            $query->where('start_date', '>', $today)
+                  ->orWhere('status', 'checked-in');
+        })
+        ->get();
+        return response()->json(['data' => $bookings]);
+    }
+
+
     public function update(Request $request, $bookingId): JsonResponse
     {
        

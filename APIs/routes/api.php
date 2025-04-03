@@ -42,6 +42,7 @@ Route::post('signup', [AuthController::class, 'signup']);
     //bookings
     Route::apiResource('bookings', BookingsController::class);
     Route::post('bookings/where', [BookingsController::class, 'conditionalIndex']);
+    Route::get('booked/dates/{cabinId}',[BookingsController::class,'bookedDates']);
     
     //settings
     Route::apiResource('settings', SettingsController::class);
